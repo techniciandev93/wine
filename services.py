@@ -2,6 +2,11 @@ from datetime import datetime
 import pandas
 from collections import defaultdict
 
+
+class YearTypeError(TypeError):
+    pass
+
+
 year = (datetime.now() - datetime(1920, 1, 1)).days // 365
 
 
@@ -17,14 +22,14 @@ def get_correct_form_word(year):
         elif 2 <= last_digit <= 4:
             return "года"
     else:
-        raise TypeError('Год должен быть типом int')
+        raise YearTypeError('Год должен быть типом int')
 
 
-def get_records_wine(path):
-    records_category_wine = defaultdict(list)
-    records_wine = pandas.read_excel(path, na_values=['N/A', 'NA'], keep_default_na=False)
-    for record_wine in records_wine.to_dict(orient='records'):
-        records_category_wine[record_wine['Категория']].append(
-            {product: value for product, value in record_wine.items() if product != 'Категория'}
+def get_wine_records(path):
+    category_wine_records = defaultdict(list)
+    wine_records = pandas.read_excel(path, na_values=['N/A', 'NA'], keep_default_na=False)
+    for wine_record in wine_records.to_dict(orient='records'):
+        category_wine_records[wine_record['Категория']].append(
+            {product: value for product, value in wine_record.items() if product != 'Категория'}
         )
-    return records_category_wine
+    return category_wine_records
